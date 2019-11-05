@@ -79,7 +79,6 @@ public class SerieBarras {
     public boolean isEmpty() {
         return (numeroPontos == 0);
     }
-
     public int getStrokeWidth() {
         return paint.StrokeWidth;
     }
@@ -98,5 +97,4 @@ public class SerieBarras {
     public void setColor(int color) {
         paint.Color = color;
     }
-
 }

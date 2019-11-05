@@ -60,9 +60,9 @@ public class Grafico extends View {
         paintFundo.setStyle(Paint.Style.FILL);
         paintFundo.setColor(Color.WHITE);
         canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), paintFundo);
-        desenhaGrades();
-        canvas.drawPath(pathGrade, paintGrade);
         if (series != null) {
+            desenhaGrades();
+            canvas.drawPath(pathGrade, paintGrade);
             if (series.getStyle() == Paint.Style.FILL) {
                 canvas.drawPath(pathSeriesInterno, paintSeriesInterno);
             } else if (series.getStyle() == Paint.Style.FILL_AND_STROKE) {
@@ -99,13 +99,13 @@ public class Grafico extends View {
     }
     private void desenhaGrades() {
         if (gradeVertical){
-            float tamanhoGrade = ((dim.getLarguraGrafico()/numeroIntervalos) * (series.isEmpty()? 1:0.8f));
+            float tamanhoGrade = ((dim.getLarguraGrafico()/numeroIntervalos) * 0.8f);
             for (int linha = 1; linha < numeroIntervalos; linha++) {
                 pathGrade.moveTo((dim.getLarguraEixoY() + tamanhoGrade * linha), dim.getAlturaEixoY());
                 pathGrade.lineTo((dim.getLarguraEixoY() + tamanhoGrade * linha), dim.getAlturaEixoY() + dim.getAlturaGrafico());
             }
         } if (gradeHorizontal){
-            float tamanhoGrade = ((dim.getAlturaGrafico()/numeroIntervalos) * (series.isEmpty()? 1:0.8f));
+            float tamanhoGrade = ((dim.getAlturaGrafico()/numeroIntervalos) * 0.8f);
             for (int coluna = 1; coluna < (numeroIntervalos+1); coluna++) {
                 pathGrade.moveTo(dim.getLarguraEixoY(), dim.getAlturaEixoY() + dim.getAlturaGrafico() - tamanhoGrade * coluna);
                 pathGrade.lineTo(dim.getLarguraEixoY() + dim.getLarguraGrafico(), dim.getAlturaEixoY() + dim.getAlturaGrafico() - tamanhoGrade * coluna);
@@ -159,8 +159,6 @@ public class Grafico extends View {
                 pathSeriesExterno.lineTo((dim.getLarguraEixoY() + ((dim.getLarguraGrafico() * 0.95f)/(series.tamanho() + 1)) * (ponto + 1) + (dim.getLarguraGrafico() * 0.015f)),
                         (dim.getAlturaEixoY() + dim.getAlturaGrafico()));
             }
-
-
 
             paintSeriesInterno.setColor(series.getColor());
             paintSeriesInterno.setStyle(Paint.Style.FILL);
