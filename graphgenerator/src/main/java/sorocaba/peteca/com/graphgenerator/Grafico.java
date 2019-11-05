@@ -124,9 +124,9 @@ public class Grafico extends View {
                         (1.015f * listBarras.get(index).top - 0.015f * listBarras.get(index).bottom):(1.5f*listBarras.get(index).top + (1-1.5f)* listBarras.get(index).bottom),
                         paintSeriesInterno);
             }
+            atualizaEixos(canvas);
         }
         desenhaLegenda(canvas);
-        atualizaEixos(canvas);
         canvas.drawPath(pathEixos, paintEixos);
    }
 
