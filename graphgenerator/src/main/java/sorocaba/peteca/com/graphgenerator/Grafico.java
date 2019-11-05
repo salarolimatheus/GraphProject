@@ -73,7 +73,6 @@ public class Grafico extends View {
             }
             atualizaValoresEixos(canvas);
         }
-
         atualizaEixos(canvas);
         canvas.drawPath(pathEixos, paintEixos);
    }
@@ -171,7 +170,8 @@ public class Grafico extends View {
         }
     }
     public void removeSeries() {
-        series.limpar();
+        if (series != null)
+            series.limpar();
     }
 
     //region getters et setters
