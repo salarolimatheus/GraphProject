@@ -214,6 +214,7 @@ public class Grafico extends View {
         }
     }
     public void addSeries(SerieBarras seriesImportado) {
+        listBarras.clear();
         if (seriesImportado != null) {
             series = seriesImportado;
             for (int ponto = 0; ponto < series.tamanho(); ponto++) {
