@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
         super.onWindowFocusChanged(hasFocus);
         grafico.iniciar();
         grafico.atualizar();
-        grafico.add(serie);
+        grafico.removeSeries();
+        grafico.addSeries(serie);
     }
 }

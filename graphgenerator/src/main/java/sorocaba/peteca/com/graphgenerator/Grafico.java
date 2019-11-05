@@ -135,7 +135,7 @@ public class Grafico extends View {
                     dim.getAlturaEixoY() + dim.getAlturaGrafico() - (dim.getAlturaGrafico()/numeroIntervalos) * 0.8f * ponto, paintValoresEixos);
         }
     }
-    public void add(SerieBarras seriesImportado) {
+    public void addSeries(SerieBarras seriesImportado) {
         if (seriesImportado != null) {
             series = seriesImportado;
             pathSeriesInterno.reset();
@@ -166,6 +166,9 @@ public class Grafico extends View {
             paintSeriesExterno.setStyle(Paint.Style.STROKE);
             atualizar();
         }
+    }
+    public void removeSeries() {
+        series.limpar();
     }
 
     //region getters et setters
