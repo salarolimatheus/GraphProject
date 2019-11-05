@@ -62,15 +62,18 @@ public class Grafico extends View {
         canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), paintFundo);
         desenhaGrades();
         canvas.drawPath(pathGrade, paintGrade);
-        if (series.getStyle() == Paint.Style.FILL) {
-            canvas.drawPath(pathSeriesInterno, paintSeriesInterno);
-        } else if (series.getStyle() == Paint.Style.FILL_AND_STROKE) {
-            canvas.drawPath(pathSeriesInterno, paintSeriesInterno);
-            canvas.drawPath(pathSeriesExterno, paintSeriesExterno);
-        } else
-            canvas.drawPath(pathSeriesExterno, paintSeriesExterno);
-        if (series != null)
+        if (series != null) {
+            if (series.getStyle() == Paint.Style.FILL) {
+                canvas.drawPath(pathSeriesInterno, paintSeriesInterno);
+            } else if (series.getStyle() == Paint.Style.FILL_AND_STROKE) {
+                canvas.drawPath(pathSeriesInterno, paintSeriesInterno);
+                canvas.drawPath(pathSeriesExterno, paintSeriesExterno);
+            } else {
+                canvas.drawPath(pathSeriesExterno, paintSeriesExterno);
+            }
             atualizaValoresEixos(canvas);
+        }
+
         atualizaEixos(canvas);
         canvas.drawPath(pathEixos, paintEixos);
    }

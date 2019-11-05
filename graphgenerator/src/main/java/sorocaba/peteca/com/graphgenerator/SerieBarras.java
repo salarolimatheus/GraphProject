@@ -9,8 +9,8 @@ public class SerieBarras {
     private ConfigPaint paint;
     private class ConfigPaint {
         int StrokeWidth = 2;
-        Paint.Style Style;
-        int Color;
+        Paint.Style Style = Paint.Style.FILL_AND_STROKE;
+        int Color = android.graphics.Color.YELLOW;
     }
 
     public SerieBarras() {
