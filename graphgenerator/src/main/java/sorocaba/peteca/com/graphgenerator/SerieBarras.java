@@ -1,23 +1,26 @@
 package sorocaba.peteca.com.graphgenerator;
 
+import android.graphics.Color;
 import android.graphics.Paint;
 
 public class SerieBarras {
     public static final int tamanhoPontos = 15;
     public double[] valor_x, valor_y;
     private int numeroPontos;
-    private ConfigPaint paint;
+    private ConfigPaint paintNormal, paintSelecionado;
     private class ConfigPaint {
         int StrokeWidth = 2;
         Paint.Style Style = Paint.Style.FILL_AND_STROKE;
-        int Color = android.graphics.Color.YELLOW;
-    }
+        int colorFill = android.graphics.Color.YELLOW;
+        int colorStroke = Color.BLACK;
 
+    }
     public SerieBarras() {
         valor_x = new double[tamanhoPontos];
         valor_y = new double[tamanhoPontos];
         numeroPontos = 0;
-        paint = new ConfigPaint();
+        paintNormal = new ConfigPaint();
+        paintSelecionado = new ConfigPaint();
     }
 
     public boolean addPonto(double x, double y) {
@@ -76,25 +79,49 @@ public class SerieBarras {
         return true;
     }
 
-    public boolean isEmpty() {
-        return (numeroPontos == 0);
-    }
     public int getStrokeWidth() {
-        return paint.StrokeWidth;
+        return paintNormal.StrokeWidth;
+    }
+    public int getStrokeWidthSelecionado() {
+        return paintSelecionado.StrokeWidth;
     }
     public void setStrokeWidth(int strokeWidth) {
-        paint.StrokeWidth = strokeWidth;
+        paintNormal.StrokeWidth = strokeWidth;
     }
+    public void setStrokeWidthSelecionado(int strokeWidth) {
+        paintSelecionado.StrokeWidth = strokeWidth;
+    }
+
     public Paint.Style getStyle() {
-        return paint.Style;
+        return paintNormal.Style;
     }
     public void setStyle(Paint.Style style) {
-        paint.Style = style;
+        paintNormal.Style = style;
+        paintSelecionado.Style = style;
     }
+
     public int getColor() {
-        return paint.Color;
+        return paintNormal.colorFill;
+    }
+    public int getColorStroke() {
+        return paintNormal.colorStroke;
+    }
+    public int getColorSelecionado() {
+        return paintSelecionado.colorFill;
+    }
+    public int getColorSelecionadoStroke() {
+        return paintSelecionado.colorStroke;
     }
     public void setColor(int color) {
-        paint.Color = color;
+        paintNormal.colorFill = color;
+    }
+    public void setColorStroke(int color) {
+        paintNormal.colorStroke = color;
+    }
+    public void setColorSelecionado(int color) {
+        paintSelecionado.colorFill = color;
+    }
+    public void setColorSelecionadoStroke(int color) {
+        paintSelecionado.colorStroke = color;
     }
 }
