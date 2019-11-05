@@ -59,10 +59,9 @@ public class Grafico extends View {
         Paint paintFundo = new Paint();
         paintFundo.setStyle(Paint.Style.FILL);
         paintFundo.setColor(Color.WHITE);
-        desenhaGrades();
         canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), paintFundo);
+        desenhaGrades();
         canvas.drawPath(pathGrade, paintGrade);
-        canvas.drawPath(pathEixos, paintEixos);
         if (series.getStyle() == Paint.Style.FILL) {
             canvas.drawPath(pathSeriesInterno, paintSeriesInterno);
         } else if (series.getStyle() == Paint.Style.FILL_AND_STROKE) {
@@ -73,6 +72,7 @@ public class Grafico extends View {
         if (series != null)
             atualizaValoresEixos(canvas);
         atualizaEixos(canvas);
+        canvas.drawPath(pathEixos, paintEixos);
    }
 
     public void iniciar() {
