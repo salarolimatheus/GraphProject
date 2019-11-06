@@ -13,13 +13,13 @@ public class Dimensoes {
     }
 
     private void Calculos() {
-        alturaEixoY = 0.04f * alturaTotal;
-        alturaGrafico = 0.92f * alturaTotal;
-        alturaEixoX = 0.04f * alturaTotal;
+        alturaEixoY = 0.05f * alturaTotal;
+        alturaGrafico = 0.89f * alturaTotal;
+        alturaEixoX = 0.06f * alturaTotal;
 
-        larguraEixoY = 0.09f * larguraTotal;
-        larguraGrafico = 0.90f * larguraTotal;
-        larguraEixoX = 0.01f * larguraTotal;
+        larguraEixoY = 0.02f * larguraTotal;
+        larguraGrafico = 0.96f * larguraTotal;
+        larguraEixoX = 0.02f * larguraTotal;
     }
 
     public float getAlturaGrafico() {

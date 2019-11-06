@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,16 +22,17 @@ public class Grafico extends View {
     private Dimensoes dim;
     private Path pathEixos, pathGrade;
     private Paint paintEixos, paintGrade, paintTextos;
+    private DecimalFormat df;
 
     // Variaveis disponiveis para o usuario fazer modificações
     private Paint paintSeriesExterno, paintSeriesInterno , paintSelecionadoExterno, paintSelecionadoInterno;
     private List<Barra> listBarras  = new ArrayList<>();
-    public int indexSelecionado;
+    public int indexSelecionado = 0;
     private SerieBarras series;
-    private String nomeEixoX = "", nomeEixoY = "", nomeGrafico = "";
+    private String nomeEixoX = "", nomeEixoY = "";
     public String stringOrdem = "", stringMagnitude = "", stringPhase = "", stringFreq = "";
     private int numeroIntervalos = 4;
-    private boolean graficoFechado, gradeVertical, gradeHorizontal;
+    private boolean graficoFechado, gradeHorizontal;
     private class Barra {
         public float left, top, right, bottom;
         public int id;
@@ -84,6 +86,8 @@ public class Grafico extends View {
         paintSeriesExterno.setStyle(Paint.Style.STROKE);
         paintSelecionadoInterno.setStyle(Paint.Style.FILL);
         paintSelecionadoExterno.setStyle(Paint.Style.STROKE);
+
+        df = new DecimalFormat("0.000");
     }
 
     protected void onDraw(Canvas canvas) {
@@ -118,10 +122,11 @@ public class Grafico extends View {
                     else
                         canvas.drawPath(path, paintSelecionadoExterno);
                 }
+
                 paintSeriesInterno.setColor(Color.BLACK);
-                canvas.drawText(Double.toString(series.valor_y[index]), (listBarras.get(index).left + listBarras.get(index).right)/2,
-                        ((paintSeriesInterno.getTextSize())<(listBarras.get(index).bottom - listBarras.get(index).top))?
-                        (1.015f * listBarras.get(index).top - 0.015f * listBarras.get(index).bottom):(1.5f*listBarras.get(index).top + (1-1.5f)* listBarras.get(index).bottom),
+                canvas.drawText(((series.valor_y[index] - (int) series.valor_y[index]) != 0) ? df.format(series.valor_y[index]) : String.valueOf((int)series.valor_y[index]),
+                        (listBarras.get(index).left + listBarras.get(index).right)/2,
+                        (listBarras.get(index).top - dim.getAlturaEixoY()/5),
                         paintSeriesInterno);
             }
             atualizaEixos(canvas);
@@ -132,6 +137,7 @@ public class Grafico extends View {
 
     public void iniciar() {
         dim = new Dimensoes(getHeight(), getWidth());
+        paintSeriesInterno.setTextSize(dim.getAlturaEixoY()/1.5f);
         desenhaEixos();
     }
     public void atualizar() {
@@ -151,13 +157,7 @@ public class Grafico extends View {
         }
     }
     private void desenhaGrades() {
-        if (gradeVertical){
-            float tamanhoGrade = ((dim.getLarguraGrafico()/numeroIntervalos) * 0.85f);
-            for (int linha = 1; linha < numeroIntervalos; linha++) {
-                pathGrade.moveTo((dim.getLarguraEixoY() + tamanhoGrade * linha), dim.getAlturaEixoY());
-                pathGrade.lineTo((dim.getLarguraEixoY() + tamanhoGrade * linha), dim.getAlturaEixoY() + dim.getAlturaGrafico());
-            }
-        } if (gradeHorizontal){
+        if (gradeHorizontal){
             float tamanhoGrade = ((dim.getAlturaGrafico()/numeroIntervalos) * 0.85f);
             for (int coluna = 1; coluna < (numeroIntervalos+1); coluna++) {
                 pathGrade.moveTo(dim.getLarguraEixoY(), dim.getAlturaEixoY() + dim.getAlturaGrafico() - tamanhoGrade * coluna);
@@ -165,7 +165,6 @@ public class Grafico extends View {
             }
         }
     }
-
     private void desenhaLegenda(Canvas canvas) {
         Paint paintLegenda = new Paint();
         paintLegenda.setTextSize(dim.getAlturaGrafico()*0.1f/3);
@@ -178,39 +177,33 @@ public class Grafico extends View {
         paintLegenda.setTextAlign(Paint.Align.RIGHT);
         canvas.drawText( "f = " + stringFreq + " Hz", dim.getLarguraEixoY() + (dim.getLarguraGrafico() - dim.getLarguraEixoX()), dim.getAlturaEixoY() + (dim.getAlturaGrafico()*0.14f*0.25f), paintLegenda);
     }
-    private void atualizaEixos(Canvas canvas) {
-        paintTextos.setTextSize(dim.getAlturaEixoY()/1.4f);
-        paintTextos.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText(nomeEixoY, (dim.getLarguraEixoY()*0.1f), (dim.getAlturaEixoY() * 0.8f), paintTextos);
-        paintTextos.setTextSize(dim.getAlturaEixoY()/1.2f);
-        paintTextos.setTextAlign(Paint.Align.CENTER);
-        canvas.drawText(nomeGrafico, ((dim.getLarguraEixoY() + dim.getLarguraGrafico() + dim.getLarguraEixoX())/2), (dim.getAlturaEixoY() * 0.75f), paintTextos);
-        paintTextos.setTextSize(dim.getAlturaEixoY()/1.4f);
-        paintTextos.setTextAlign(Paint.Align.RIGHT);
-        canvas.drawText(nomeEixoX, (dim.getLarguraEixoY() + dim.getLarguraGrafico() + dim.getLarguraEixoX()/2), (float)(dim.getAlturaEixoY() + dim.getAlturaGrafico() + dim.getAlturaEixoX() * 0.7), paintTextos);
 
-        Paint paintValoresEixos = new Paint();
-        paintValoresEixos.setTextSize(dim.getAlturaEixoY()/1.8f);
-        paintValoresEixos.setTextAlign(Paint.Align.CENTER);
+    private void atualizaEixos(Canvas canvas) {
+        paintTextos.setTextSize(dim.getAlturaEixoY()/1.5f);
+        paintTextos.setTextAlign(Paint.Align.LEFT);
+        canvas.drawText(nomeEixoY, (dim.getLarguraEixoY()*0.2f), (dim.getAlturaEixoY() * 0.8f), paintTextos);
+
+        paintTextos.setTextSize(dim.getAlturaEixoY()/1.5f);
+        paintTextos.setTextAlign(Paint.Align.RIGHT);
+        canvas.drawText(nomeEixoX, (dim.getLarguraEixoY() + dim.getLarguraGrafico() + dim.getLarguraEixoX()/2), (dim.getAlturaEixoY() + dim.getAlturaGrafico() + 0.9f*dim.getAlturaEixoX()), paintTextos);
+
+        paintTextos.setTextSize(dim.getAlturaEixoY()/1.5f);
+        paintTextos.setTextAlign(Paint.Align.CENTER);
         for (int ponto = 0; ponto < series.tamanho(); ponto++) {
             if (ponto == indexSelecionado) {
-                paintValoresEixos.setColor(series.getColorSelecionado());
-                paintValoresEixos.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-                canvas.drawText(Double.toString(series.valor_x[ponto]),
+                paintTextos.setColor(series.getColorSelecionado());
+                paintTextos.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+                canvas.drawText(String.valueOf(series.valor_x[ponto]),
                         (dim.getLarguraEixoY() + ((dim.getLarguraGrafico() * 0.95f)/(series.tamanho() + 1)) * (ponto + 1)),
-                        (dim.getAlturaEixoY() + dim.getAlturaGrafico() + dim.getAlturaEixoX() * 0.7f), paintValoresEixos);
-                paintValoresEixos.setColor(Color.BLACK);
-                paintValoresEixos.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+                        (dim.getAlturaEixoY() + dim.getAlturaGrafico() + dim.getAlturaEixoX()/1.5f), paintTextos);
+                paintTextos.setColor(Color.BLACK);
+                paintTextos.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
             } else {
-                canvas.drawText(Double.toString(series.valor_x[ponto]),
+                canvas.drawText(String.valueOf(series.valor_x[ponto]),
                         (dim.getLarguraEixoY() + ((dim.getLarguraGrafico() * 0.95f) / (series.tamanho() + 1)) * (ponto + 1)),
-                        (dim.getAlturaEixoY() + dim.getAlturaGrafico() + dim.getAlturaEixoX() * 0.7f), paintValoresEixos);
+                        (dim.getAlturaEixoY() + dim.getAlturaGrafico() + dim.getAlturaEixoX()/1.5f), paintTextos);
             }
 
-        }
-        for (int ponto = 0; ponto < (numeroIntervalos + 1); ponto++) {
-            canvas.drawText(Double.toString((series.valorMaximo()/numeroIntervalos) * ponto), (dim.getLarguraEixoY()/2),
-                    dim.getAlturaEixoY() + dim.getAlturaGrafico() - (dim.getAlturaGrafico()/numeroIntervalos) * 0.85f * ponto, paintValoresEixos);
         }
     }
     public void addSeries(SerieBarras seriesImportado) {
@@ -223,7 +216,6 @@ public class Grafico extends View {
                         (dim.getLarguraEixoY() + ((dim.getLarguraGrafico() * 0.95f)/(series.tamanho() + 1)) * (ponto + 1) + (dim.getLarguraGrafico() * 0.015f)),
                         (dim.getAlturaEixoY() + dim.getAlturaGrafico()), ponto));
             }
-            paintSeriesInterno.setTextSize(dim.getLarguraGrafico() * 0.04f);
             paintSeriesExterno.setStrokeWidth(series.getStrokeWidth());
             paintSeriesExterno.setColor(series.getColorStroke());
             paintSelecionadoInterno.setColor(series.getColorSelecionado());
@@ -250,9 +242,6 @@ public class Grafico extends View {
     public void setGraficoFechado(boolean graficoFechado) {
         this.graficoFechado = graficoFechado;
     }
-    public void setGradeVertical(boolean gradeVertical) {
-        this.gradeVertical = gradeVertical;
-    }
     public void setGradeHorizontal(boolean gradeHorizontal) {
         this.gradeHorizontal = gradeHorizontal;
     }
@@ -261,9 +250,6 @@ public class Grafico extends View {
     }
     public void setNomeEixoY(String nomeEixoY) {
         this.nomeEixoY = nomeEixoY;
-    }
-    public void setNomeGrafico(String nomeGrafico) {
-        this.nomeGrafico = nomeGrafico;
     }
     public void setNumeroIntervalos(int numeroIntervalos) {
         this.numeroIntervalos = numeroIntervalos;

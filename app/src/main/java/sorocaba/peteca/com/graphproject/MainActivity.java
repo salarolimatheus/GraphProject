@@ -21,10 +21,8 @@ public class MainActivity extends AppCompatActivity {
         grafico = findViewById(R.id.grafico);
         grafico.setGraficoFechado(true);
         grafico.setGradeHorizontal(true);
-        grafico.setGradeVertical(false);
         grafico.setNomeEixoX("Ordem");
         grafico.setNomeEixoY("Magnitude");
-        grafico.setNomeGrafico("Nome do Gráfico");
 
         series = new SerieBarras();
         series.setStrokeWidth(5);
@@ -34,11 +32,11 @@ public class MainActivity extends AppCompatActivity {
         series.setStrokeWidthSelecionado(7);
         series.setColorSelecionado(Color.BLUE);
         series.setColorSelecionadoStroke(Color.GREEN);
-        series.addPonto(1, 80);
-        series.addPonto(1.5, 1);
-        series.addPonto(2, 30);
-        series.addPonto(3, 1);
-        series.addPonto(4, 50);
+        series.addPonto(1, 80.21513959303451);
+        series.addPonto(2, 1.2014214);
+        series.addPonto(3, 30);
+        series.addPonto(4, 1);
+        series.addPonto(5, 50);
 
         grafico.setOnTouchListener(new View.OnTouchListener() {
             @Override

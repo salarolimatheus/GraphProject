@@ -5,7 +5,8 @@ import android.graphics.Paint;
 
 public class SerieBarras {
     public static final int tamanhoPontos = 15;
-    public double[] valor_x, valor_y;
+    public int[] valor_x;
+    public double[] valor_y;
     private int numeroPontos;
     private ConfigPaint paintNormal, paintSelecionado;
     private class ConfigPaint {
@@ -16,14 +17,14 @@ public class SerieBarras {
 
     }
     public SerieBarras() {
-        valor_x = new double[tamanhoPontos];
+        valor_x = new int[tamanhoPontos];
         valor_y = new double[tamanhoPontos];
         numeroPontos = 0;
         paintNormal = new ConfigPaint();
         paintSelecionado = new ConfigPaint();
     }
 
-    public boolean addPonto(double x, double y) {
+    public boolean addPonto(int x, double y) {
         if (numeroPontos < tamanhoPontos) {
             valor_x[numeroPontos] = x;
             valor_y[numeroPontos] = y;
