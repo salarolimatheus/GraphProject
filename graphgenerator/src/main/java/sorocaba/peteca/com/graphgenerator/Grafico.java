@@ -167,13 +167,13 @@ public class Grafico extends View {
     }
     private void desenhaLegenda(Canvas canvas) {
         Paint paintLegenda = new Paint();
-        paintLegenda.setTextSize(dim.getAlturaGrafico()*0.1f/3);
+        paintLegenda.setTextSize(dim.getAlturaGrafico()*0.15f/4);
         paintLegenda.setTextAlign(Paint.Align.LEFT);
         canvas.drawRect(new RectF(dim.getLarguraEixoY() + (dim.getLarguraGrafico()*2.0f/5), dim.getAlturaEixoY(),
-                dim.getLarguraEixoY() + dim.getLarguraGrafico(), dim.getAlturaEixoY() + dim.getAlturaGrafico()*0.13f), paintEixos);
+                dim.getLarguraEixoY() + dim.getLarguraGrafico(), dim.getAlturaEixoY() + dim.getAlturaGrafico()*0.14f), paintEixos);
         canvas.drawText("Ordem = " + stringOrdem, dim.getLarguraEixoY() + (dim.getLarguraGrafico()*2.1f/5), dim.getAlturaEixoY() + (dim.getAlturaGrafico()*0.14f*0.25f), paintLegenda);
-        canvas.drawText("Magnitude = " + stringMagnitude + " A", dim.getLarguraEixoY() + (dim.getLarguraGrafico()*2.1f/5),dim.getAlturaEixoY() + (dim.getAlturaGrafico()*0.14f*0.55f), paintLegenda);
-        canvas.drawText("Phase = " + stringPhase + "º", dim.getLarguraEixoY() + (dim.getLarguraGrafico()*2.1f/5), dim.getAlturaEixoY() + (dim.getAlturaGrafico()*0.14f*0.85f), paintLegenda);
+        canvas.drawText("Magnitude = " + stringMagnitude + " A", dim.getLarguraEixoY() + (dim.getLarguraGrafico()*2.1f/5),dim.getAlturaEixoY() + (dim.getAlturaGrafico()*0.14f*0.6f), paintLegenda);
+        canvas.drawText("Phase = " + stringPhase + "º", dim.getLarguraEixoY() + (dim.getLarguraGrafico()*2.1f/5), dim.getAlturaEixoY() + (dim.getAlturaGrafico()*0.14f*0.95f), paintLegenda);
         paintLegenda.setTextAlign(Paint.Align.RIGHT);
         canvas.drawText( "f = " + stringFreq + " Hz", dim.getLarguraEixoY() + (dim.getLarguraGrafico() - dim.getLarguraEixoX()), dim.getAlturaEixoY() + (dim.getAlturaGrafico()*0.14f*0.25f), paintLegenda);
     }
@@ -181,11 +181,11 @@ public class Grafico extends View {
     private void atualizaEixos(Canvas canvas) {
         paintTextos.setTextSize(dim.getAlturaEixoY()/1.5f);
         paintTextos.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText(nomeEixoY, (dim.getLarguraEixoY()*0.2f), (dim.getAlturaEixoY() * 0.8f), paintTextos);
+        canvas.drawText(nomeEixoY, (dim.getLarguraEixoY()), (dim.getAlturaEixoY() * 0.8f), paintTextos);
 
         paintTextos.setTextSize(dim.getAlturaEixoY()/1.5f);
         paintTextos.setTextAlign(Paint.Align.RIGHT);
-        canvas.drawText(nomeEixoX, (dim.getLarguraEixoY() + dim.getLarguraGrafico() + dim.getLarguraEixoX()/2), (dim.getAlturaEixoY() + dim.getAlturaGrafico() + 0.9f*dim.getAlturaEixoX()), paintTextos);
+        canvas.drawText(nomeEixoX, (dim.getLarguraEixoY() + dim.getLarguraGrafico() + dim.getLarguraEixoX()/2), (dim.getAlturaEixoY() + dim.getAlturaGrafico() + dim.getAlturaEixoX()/1.7f), paintTextos);
 
         paintTextos.setTextSize(dim.getAlturaEixoY()/1.5f);
         paintTextos.setTextAlign(Paint.Align.CENTER);
@@ -195,7 +195,7 @@ public class Grafico extends View {
                 paintTextos.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
                 canvas.drawText(String.valueOf(series.valor_x[ponto]),
                         (dim.getLarguraEixoY() + ((dim.getLarguraGrafico() * 0.95f)/(series.tamanho() + 1)) * (ponto + 1)),
-                        (dim.getAlturaEixoY() + dim.getAlturaGrafico() + dim.getAlturaEixoX()/1.5f), paintTextos);
+                        (dim.getAlturaEixoY() + dim.getAlturaGrafico() + dim.getAlturaEixoX()/1.6f), paintTextos);
                 paintTextos.setColor(Color.BLACK);
                 paintTextos.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
             } else {
