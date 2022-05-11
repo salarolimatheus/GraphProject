@@ -1,8 +1,8 @@
 # GraphProject
 [![](https://jitpack.io/v/salarolimatheus/GraphProject.svg)](https://jitpack.io/#salarolimatheus/GraphProject)
 
-grafico = findViewById(R.id.grafico);
 
+        grafico = findViewById(R.id.grafico);
         grafico.setGraficoFechado(true);
         grafico.setGradeStatus(true);
         grafico.setNomeEixoX("Ordem");
