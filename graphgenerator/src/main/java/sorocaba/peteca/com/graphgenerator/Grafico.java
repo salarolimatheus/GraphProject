@@ -272,7 +272,7 @@ public class Grafico extends View {
             listBarraDimensoes.add(new BarraDimensoes(larguraPaddingEsquerdo + barra * tamanhoSerie,
                     (float) (alturaEixoY + alturaGrafico * (1.0 - ((seriesBarras.valor_y[barra] / seriesBarras.valorMaximo) * 0.95))),
                     larguraPaddingEsquerdo + (barra + 1) * tamanhoSerie - distanciaSerie,
-                    alturaGrafico + alturaEixoY, barra));
+                    alturaGrafico + alturaEixoY + (alturaEixoX/2), barra));
             pathBarras.add(path);
         }
         indexSelecionado = 0;
