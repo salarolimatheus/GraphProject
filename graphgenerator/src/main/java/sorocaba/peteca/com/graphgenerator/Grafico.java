@@ -43,7 +43,6 @@ public class Grafico extends View {
     private int indexSelecionado = 0;
     private int colorBarraSelecionada = Color.RED;
     private float tamanhoSerie, distanciaSerie;
-    private int quantidadeBarras;
 
     private static class BarraDimensoes {
         public float left, top, right, bottom;
@@ -248,10 +247,11 @@ public class Grafico extends View {
     }
     private void atualizaDados() {
         pathBarras.clear();
+        listBarraDimensoes.clear();
         if (seriesBarras == null)
             return;
 
-        quantidadeBarras = seriesBarras.tamanho();
+        int quantidadeBarras = seriesBarras.tamanho();
         tamanhoSerie = (larguraPaddingDireito - larguraPaddingEsquerdo) / quantidadeBarras;
         distanciaSerie = 0.75f * tamanhoSerie;
 

@@ -43,7 +43,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
                 grafico.ToqueNaTela(motionEvent);
-                //grafico.indexSelecionado
                 return true;
             }
         });
