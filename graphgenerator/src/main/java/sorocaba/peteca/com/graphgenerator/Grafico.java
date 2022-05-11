@@ -162,6 +162,7 @@ public class Grafico extends View {
         atualizaDados();
 
         if (seriesBarras != null) {
+            indexSelecionado = 0;
             stringOrdem = String.valueOf(seriesBarras.valor_x[indexSelecionado]);
             stringMagnitude = df.format(seriesBarras.valor_y[indexSelecionado]);
             stringPhase = df.format(seriesBarras.arg2[indexSelecionado]);
@@ -176,6 +177,13 @@ public class Grafico extends View {
     public void addSerie(SerieBarras series) {
         this.seriesBarras = series;
         atualizaDados();
+        indexSelecionado = 0;
+        stringOrdem = String.valueOf(seriesBarras.valor_x[indexSelecionado]);
+        stringMagnitude = df.format(seriesBarras.valor_y[indexSelecionado]);
+        stringPhase = df.format(seriesBarras.arg2[indexSelecionado]);
+        df.applyPattern("0.0");
+        stringFreq = df.format(seriesBarras.arg1[indexSelecionado]);
+
         invalidate();
     }
 
