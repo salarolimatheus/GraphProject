@@ -13,6 +13,7 @@
         SerieBarras series = new SerieBarras();
         series.addBarra(1, 80.21513959303451, 1, 60);
         series.addBarra(2, 1.2014214,1, 120);
+		series.reiniciar();
         series.addBarra(3, 30,1, 180);
         series.addBarra(4, 1,1, 240);
         series.addBarra(5, 1,1, 240);

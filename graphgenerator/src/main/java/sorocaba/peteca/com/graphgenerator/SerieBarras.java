@@ -47,10 +47,11 @@ public class SerieBarras {
     }
 
     public void reiniciar() {
-        for (numeroPontos = (tamanhoPontos - 1); numeroPontos >= 0; numeroPontos--){
+        for (numeroPontos = (tamanhoPontos - 1); numeroPontos > 0; numeroPontos--){
             valor_x[numeroPontos] = 0;
             valor_y[numeroPontos] = 0;
         }
+        primeiroValor = true;
     }
     public int tamanho() {
         return numeroPontos;
