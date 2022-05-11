@@ -17,26 +17,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Grafico extends View {
+    private float alturaEixoX, alturaEixoY, alturaGrafico;
+    private float larguraEixoX, larguraEixoY, larguraGrafico;
+
+    private float larguraPaddingEsquerdo, larguraPaddingDireito;
 
     // Variaveis relacionados com o gráfico sem modificações
-    private Dimensoes dim;
+    private final List<Path> pathBarras = new ArrayList<>();
+    private final List<BarraDimensoes> listBarraDimensoes  = new ArrayList<>();
     private Path pathEixos, pathGrade;
-    private Paint paintEixos, paintGrade, paintTextos;
-    private DecimalFormat df;
+    private Paint paintEixos, paintGrade, paintTextos, paintBarras, paintBarraSelecionada;
+    private Rect rect;
 
     // Variaveis disponiveis para o usuario fazer modificações
-    private Paint paintSeriesExterno, paintSeriesInterno , paintSelecionadoExterno, paintSelecionadoInterno;
-    private List<Barra> listBarras  = new ArrayList<>();
-    public int indexSelecionado = 0;
-    private SerieBarras series;
+    private boolean graficoFechado = true, gradeStatus = false;
     private String nomeEixoX = "", nomeEixoY = "";
     public String stringOrdem = "", stringMagnitude = "", stringPhase = "", stringFreq = "";
-    private int numeroIntervalos = 4;
-    private boolean graficoFechado, gradeHorizontal;
-    private class Barra {
+    private String grandezaMagnitude = "", grandezaPhase = "º", grandezaFreq = "Hz";
+    private int numeroGradesHorizontais = 4;
+
+    private SerieBarras seriesBarras;
+
+    //NAO REVISADOS
+    private DecimalFormat df;
+    private int indexSelecionado = 0;
+    private int colorBarraSelecionada = Color.RED;
+    private float tamanhoSerie, distanciaSerie;
+    private int quantidadeBarras;
+
+    private static class BarraDimensoes {
         public float left, top, right, bottom;
         public int id;
-        Barra(float left, float top, float right, float bottom, int id) {
+
+        BarraDimensoes(float left, float top, float right, float bottom, int id) {
             this.left = left;
             this.top = top;
             this.right = right;
@@ -58,192 +71,211 @@ public class Grafico extends View {
         paintEixos.setStrokeWidth(5);
         paintEixos.setStyle(Paint.Style.STROKE);
         paintEixos.setColor(Color.BLACK);
+        paintEixos.setAntiAlias(true);
 
         paintGrade = new Paint();
         paintGrade.setStrokeWidth(3);
         paintGrade.setStyle(Paint.Style.STROKE);
         paintGrade.setColor(Color.DKGRAY);
+        paintGrade.setAntiAlias(true);
 
         paintTextos = new Paint();
-        paintSeriesInterno = new Paint();
-        paintSeriesExterno = new Paint();
-        paintSelecionadoInterno = new Paint();
-        paintSelecionadoExterno = new Paint();
-
-        paintEixos.setAntiAlias(true);
-        paintGrade.setAntiAlias(true);
         paintTextos.setAntiAlias(true);
-        paintSeriesInterno.setAntiAlias(true);
-        paintSeriesExterno.setAntiAlias(true);
-        paintSelecionadoInterno.setAntiAlias(true);
-        paintSelecionadoExterno.setAntiAlias(true);
+
+        paintBarras = new Paint();
+        paintBarras.setStyle(Paint.Style.FILL);
+        paintBarras.setColor(Color.BLUE);
+
+        paintBarraSelecionada = new Paint();
+        paintBarraSelecionada.setStyle(Paint.Style.FILL);
+        paintBarraSelecionada.setColor(Color.RED);
 
         pathEixos = new Path();
         pathGrade = new Path();
 
-        paintSeriesInterno.setTextAlign(Paint.Align.CENTER);
-        paintSeriesInterno.setStyle(Paint.Style.FILL);
-        paintSeriesExterno.setStyle(Paint.Style.STROKE);
-        paintSelecionadoInterno.setStyle(Paint.Style.FILL);
-        paintSelecionadoExterno.setStyle(Paint.Style.STROKE);
-
         df = new DecimalFormat("0.000");
+
+        this.seriesBarras = null;
     }
 
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        Paint paintFundo = new Paint();
-        paintFundo.setStyle(Paint.Style.FILL);
-        paintFundo.setColor(Color.WHITE);
-        canvas.drawRect(new Rect(0, 0, getWidth(), getHeight()), paintFundo);
-        if (series != null) {
-            desenhaGrades();
-            canvas.drawPath(pathGrade, paintGrade);
-            for (int index = 0; index < listBarras.size(); index++) {
-                Path path = new Path();
-                path.addRect(new RectF(listBarras.get(index).left, listBarras.get(index).top, listBarras.get(index).right, listBarras.get(index).bottom), Path.Direction.CCW);
-                paintSeriesInterno.setColor(series.getColor());
-                if (listBarras.get(index).id != indexSelecionado) {
-                    if (series.getStyle() == Paint.Style.FILL_AND_STROKE) {
-                        canvas.drawPath(path, paintSeriesInterno);
-                        canvas.drawPath(path, paintSeriesExterno);
-                    } else if (series.getStyle() == Paint.Style.FILL)
-                        canvas.drawPath(path, paintSeriesInterno);
-                    else
-                        canvas.drawPath(path, paintSeriesExterno);
-                    paintSeriesInterno.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-                } else {
-                    paintSeriesInterno.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-                    if (series.getStyle() == Paint.Style.FILL_AND_STROKE) {
-                        canvas.drawPath(path, paintSelecionadoInterno);
-                        canvas.drawPath(path, paintSelecionadoExterno);
-                    } else if (series.getStyle() == Paint.Style.FILL)
-                        canvas.drawPath(path, paintSelecionadoInterno);
-                    else
-                        canvas.drawPath(path, paintSelecionadoExterno);
-                }
+        paintEixos.setStyle(Paint.Style.FILL_AND_STROKE);
+        paintEixos.setColor(Color.WHITE);
+        canvas.drawRect(rect, paintEixos);
+        paintEixos.setColor(Color.BLACK);
+        paintEixos.setStyle(Paint.Style.STROKE);
 
-                paintSeriesInterno.setColor(Color.BLACK);
-                canvas.drawText(((series.valor_y[index] - (int) series.valor_y[index]) != 0) ? df.format(series.valor_y[index]) : String.valueOf((int)series.valor_y[index]),
-                        (listBarras.get(index).left + listBarras.get(index).right)/2,
-                        (listBarras.get(index).top - dim.getAlturaEixoY()/5),
-                        paintSeriesInterno);
-            }
-            atualizaEixos(canvas);
+        if(gradeStatus) {
+            canvas.drawPath(pathGrade, paintGrade);
         }
-        desenhaLegenda(canvas);
+        if (seriesBarras != null) {
+            for (int index = 0; index < pathBarras.size(); index++) {
+                Path path = this.pathBarras.get(index);
+                if (index != indexSelecionado)
+                    canvas.drawPath(path, paintBarras);
+                else
+                    canvas.drawPath(path, paintBarraSelecionada);
+            }
+        }
+
         canvas.drawPath(pathEixos, paintEixos);
+        atualizaTextosEixos(canvas);
+        atualizaLegenda(canvas);
    }
 
-    public void iniciar() {
-        dim = new Dimensoes(getHeight(), getWidth());
-        paintSeriesInterno.setTextSize(dim.getAlturaEixoY()/1.5f);
-        desenhaEixos();
-    }
-    public void atualizar() {
+    public void ToqueNaTela(MotionEvent event) {
+        for (int elemento = 0; elemento < listBarraDimensoes.size(); elemento++) {
+            BarraDimensoes barraDimensoes = listBarraDimensoes.get(elemento);
+            if ((event.getX() >= barraDimensoes.left) && (event.getX() < barraDimensoes.right) &&
+                    (event.getY() > barraDimensoes.top) && (event.getY() < (barraDimensoes.bottom + alturaEixoX))) {
+                indexSelecionado = barraDimensoes.id;
+            }
+        }
+
+        stringOrdem = String.valueOf(seriesBarras.valor_x[indexSelecionado]);
+        df.applyPattern("0.000");
+        stringMagnitude = df.format(seriesBarras.valor_y[indexSelecionado]);
+        stringPhase = df.format(seriesBarras.arg1[indexSelecionado]);
+        df.applyPattern("0.0");
+        stringFreq = df.format(seriesBarras.arg2[indexSelecionado]);
+
         invalidate();
     }
+
+    @Override
+    protected void onSizeChanged(int width, int height, int oldw, int oldh) {
+        alturaEixoY = 0.05f * (float) height;
+        alturaGrafico = 0.89f * (float) height;
+        alturaEixoX = 0.06f * (float) height;
+
+        larguraEixoY = 0.02f * (float) width;
+        larguraGrafico = 0.96f * (float) width;
+        larguraEixoX = 0.02f * (float) width;
+
+        larguraPaddingEsquerdo = 0.05f * (float) width;
+        larguraPaddingDireito = 0.85f * (float) width;
+
+        rect = new Rect(0, 0, width, height);
+
+        desenhaEixos();
+        desenhaGrades();
+        atualizaDados();
+
+        if (seriesBarras != null) {
+            stringOrdem = String.valueOf(seriesBarras.valor_x[indexSelecionado]);
+            stringMagnitude = df.format(seriesBarras.valor_y[indexSelecionado]);
+            stringPhase = df.format(seriesBarras.arg2[indexSelecionado]);
+            df.applyPattern("0.0");
+            stringFreq = df.format(seriesBarras.arg1[indexSelecionado]);
+        }
+
+        invalidate();
+        super.onSizeChanged(width, height, oldw, oldh);
+    }
+
+    public void addSerie(SerieBarras series) {
+        this.seriesBarras = series;
+        atualizaDados();
+        invalidate();
+    }
+
     private void desenhaEixos() {
         pathEixos.reset();
-        pathGrade.reset();
 
-        pathEixos.moveTo(dim.getLarguraEixoY(), dim.getAlturaEixoY());
-        pathEixos.lineTo(dim.getLarguraEixoY(), dim.getAlturaEixoY() + dim.getAlturaGrafico());
-        pathEixos.lineTo(dim.getLarguraEixoY() + dim.getLarguraGrafico(), dim.getAlturaEixoY() + dim.getAlturaGrafico());
+        pathEixos.moveTo(larguraEixoY, alturaEixoY);
+        pathEixos.lineTo(larguraEixoY, alturaEixoY + alturaGrafico);
+        pathEixos.lineTo(larguraEixoY + larguraGrafico, alturaEixoY + alturaGrafico);
 
         if (graficoFechado) {
-            pathEixos.lineTo(dim.getLarguraEixoY() + dim.getLarguraGrafico(), dim.getAlturaEixoY());
+            pathEixos.lineTo(larguraEixoY + larguraGrafico, alturaEixoY);
             pathEixos.close();
         }
     }
     private void desenhaGrades() {
-        if (gradeHorizontal){
-            float tamanhoGrade = ((dim.getAlturaGrafico()/numeroIntervalos) * 0.85f);
-            for (int coluna = 1; coluna < (numeroIntervalos+1); coluna++) {
-                pathGrade.moveTo(dim.getLarguraEixoY(), dim.getAlturaEixoY() + dim.getAlturaGrafico() - tamanhoGrade * coluna);
-                pathGrade.lineTo(dim.getLarguraEixoY() + dim.getLarguraGrafico(), dim.getAlturaEixoY() + dim.getAlturaGrafico() - tamanhoGrade * coluna);
+        pathGrade.reset();
+        if (gradeStatus) {
+            float tamanhoGrade = ((alturaGrafico/ numeroGradesHorizontais) * 0.85f);
+            for (int coluna = 1; coluna < (numeroGradesHorizontais +1); coluna++) {
+                pathGrade.moveTo(larguraEixoY, alturaEixoY + alturaGrafico - tamanhoGrade * coluna);
+                pathGrade.lineTo(larguraEixoY + larguraGrafico, alturaEixoY + alturaGrafico - tamanhoGrade * coluna);
             }
         }
     }
-    private void desenhaLegenda(Canvas canvas) {
-        Paint paintLegenda = new Paint();
-        paintLegenda.setTextSize(dim.getAlturaGrafico()*0.15f/4);
-        paintLegenda.setTextAlign(Paint.Align.LEFT);
-        canvas.drawRect(new RectF(dim.getLarguraEixoY() + (dim.getLarguraGrafico()*2.0f/5), dim.getAlturaEixoY(),
-                dim.getLarguraEixoY() + dim.getLarguraGrafico(), dim.getAlturaEixoY() + dim.getAlturaGrafico()*0.14f), paintEixos);
-        canvas.drawText("Ordem = " + stringOrdem, dim.getLarguraEixoY() + (dim.getLarguraGrafico()*2.1f/5), dim.getAlturaEixoY() + (dim.getAlturaGrafico()*0.14f*0.25f), paintLegenda);
-        canvas.drawText("Magnitude = " + stringMagnitude + " A", dim.getLarguraEixoY() + (dim.getLarguraGrafico()*2.1f/5),dim.getAlturaEixoY() + (dim.getAlturaGrafico()*0.14f*0.6f), paintLegenda);
-        canvas.drawText("Phase = " + stringPhase + "º", dim.getLarguraEixoY() + (dim.getLarguraGrafico()*2.1f/5), dim.getAlturaEixoY() + (dim.getAlturaGrafico()*0.14f*0.95f), paintLegenda);
-        paintLegenda.setTextAlign(Paint.Align.RIGHT);
-        canvas.drawText( "f = " + stringFreq + " Hz", dim.getLarguraEixoY() + (dim.getLarguraGrafico() - dim.getLarguraEixoX()), dim.getAlturaEixoY() + (dim.getAlturaGrafico()*0.14f*0.25f), paintLegenda);
-    }
-
-    private void atualizaEixos(Canvas canvas) {
-        paintTextos.setTextSize(dim.getAlturaEixoY()/1.5f);
+    private void atualizaTextosEixos(Canvas canvas) {
+        paintTextos.setTextSize(alturaEixoY/1.5f);
         paintTextos.setTextAlign(Paint.Align.LEFT);
-        canvas.drawText(nomeEixoY, (dim.getLarguraEixoY()), (dim.getAlturaEixoY() * 0.8f), paintTextos);
+        canvas.drawText(nomeEixoY, (larguraEixoY), (alturaEixoY * 0.8f), paintTextos);
 
-        paintTextos.setTextSize(dim.getAlturaEixoY()/1.5f);
+        paintTextos.setTextSize(alturaEixoX/2.0f);
         paintTextos.setTextAlign(Paint.Align.RIGHT);
-        canvas.drawText(nomeEixoX, (dim.getLarguraEixoY() + dim.getLarguraGrafico() + dim.getLarguraEixoX()/2), (dim.getAlturaEixoY() + dim.getAlturaGrafico() + dim.getAlturaEixoX()/1.7f), paintTextos);
+        canvas.drawText(nomeEixoX, (larguraEixoY + larguraGrafico + larguraEixoX/2), (alturaEixoY + alturaGrafico + alturaEixoX/1.7f), paintTextos);
 
-        paintTextos.setTextSize(dim.getAlturaEixoY()/1.5f);
+        paintTextos.setTextSize(alturaEixoX/2.0f);
         paintTextos.setTextAlign(Paint.Align.CENTER);
-        for (int ponto = 0; ponto < series.tamanho(); ponto++) {
-            if (ponto == indexSelecionado) {
-                paintTextos.setColor(series.getColorSelecionado());
-                paintTextos.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
-                canvas.drawText(String.valueOf(series.valor_x[ponto]),
-                        (dim.getLarguraEixoY() + ((dim.getLarguraGrafico() * 0.95f)/(series.tamanho() + 1)) * (ponto + 1)),
-                        (dim.getAlturaEixoY() + dim.getAlturaGrafico() + dim.getAlturaEixoX()/1.6f), paintTextos);
-                paintTextos.setColor(Color.BLACK);
-                paintTextos.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
-            } else {
-                canvas.drawText(String.valueOf(series.valor_x[ponto]),
-                        (dim.getLarguraEixoY() + ((dim.getLarguraGrafico() * 0.95f) / (series.tamanho() + 1)) * (ponto + 1)),
-                        (dim.getAlturaEixoY() + dim.getAlturaGrafico() + dim.getAlturaEixoX()/1.5f), paintTextos);
-            }
 
-        }
-    }
-    public void addSeries(SerieBarras seriesImportado) {
-        listBarras.clear();
-        if (seriesImportado != null) {
-            series = seriesImportado;
-            for (int ponto = 0; ponto < series.tamanho(); ponto++) {
-                listBarras.add(new Barra(dim.getLarguraEixoY() + ((dim.getLarguraGrafico() * 0.95f)/(series.tamanho() + 1)) * (ponto + 1) - (dim.getLarguraGrafico() * 0.015f),
-                        (float) (dim.getAlturaEixoY() + dim.getAlturaGrafico() * (1.0 - ((series.valor_y[ponto] / series.valorMaximo()) * 0.85))),
-                        (dim.getLarguraEixoY() + ((dim.getLarguraGrafico() * 0.95f)/(series.tamanho() + 1)) * (ponto + 1) + (dim.getLarguraGrafico() * 0.015f)),
-                        (dim.getAlturaEixoY() + dim.getAlturaGrafico()), ponto));
-            }
-            paintSeriesExterno.setStrokeWidth(series.getStrokeWidth());
-            paintSeriesExterno.setColor(series.getColorStroke());
-            paintSelecionadoInterno.setColor(series.getColorSelecionado());
-            paintSelecionadoExterno.setStrokeWidth(series.getStrokeWidthSelecionado());
-            paintSelecionadoExterno.setColor(series.getColorSelecionadoStroke());
-            atualizar();
-        }
-    }
-    public void removeSeries() {
-        if (series != null)
-            series.limpar();
-    }
-    public void ToqueNaTela(MotionEvent event) {
-        for (int elemento = 0; elemento < listBarras.size(); elemento++) {
-            if ((event.getX() >= listBarras.get(elemento).left) && (event.getX() < listBarras.get(elemento).right) &&
-                    (event.getY() > listBarras.get(elemento).top) && (event.getY() < (listBarras.get(elemento).bottom + dim.getAlturaEixoX()))) {
-                indexSelecionado = listBarras.get(elemento).id;
+        if (seriesBarras != null) {
+            for (int index = 0; index < seriesBarras.tamanho(); index++) {
+                if (index == indexSelecionado) {
+                    paintTextos.setColor(colorBarraSelecionada);
+                    paintTextos.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+
+                    canvas.drawText(String.valueOf(seriesBarras.valor_x[index]),
+                            larguraPaddingEsquerdo + ((2*index+1) * tamanhoSerie - distanciaSerie)/2,
+                            alturaGrafico + alturaEixoY + (alturaEixoX/2), paintTextos);
+
+                    paintTextos.setColor(Color.BLACK);
+                    paintTextos.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.NORMAL));
+                } else {
+                    canvas.drawText(String.valueOf(seriesBarras.valor_x[index]),
+                            larguraPaddingEsquerdo + ((2*index+1) * tamanhoSerie - distanciaSerie)/2,
+                            alturaGrafico + alturaEixoY + (alturaEixoX/2), paintTextos);
+                }
+
             }
         }
-        invalidate();
+    }
+    private void atualizaLegenda(Canvas canvas) {
+        paintTextos.setTextSize(alturaGrafico*0.12f/4);
+        paintTextos.setTextAlign(Paint.Align.LEFT);
+        canvas.drawRect(new RectF(larguraEixoY + (larguraGrafico*2.0f/5), alturaEixoY,
+                larguraEixoY + larguraGrafico, alturaEixoY + alturaGrafico*0.14f), paintEixos);
+        canvas.drawText("Ordem = " + stringOrdem, larguraEixoY + (larguraGrafico*2.1f/5), alturaEixoY + (alturaGrafico*0.14f*0.25f), paintTextos);
+        canvas.drawText("Magnitude = " + stringMagnitude + grandezaMagnitude, larguraEixoY + (larguraGrafico*2.1f/5),alturaEixoY + (alturaGrafico*0.14f*0.6f), paintTextos);
+        canvas.drawText("Phase = " + stringPhase + grandezaPhase, larguraEixoY + (larguraGrafico*2.1f/5), alturaEixoY + (alturaGrafico*0.14f*0.95f), paintTextos);
+        paintTextos.setTextAlign(Paint.Align.RIGHT);
+        canvas.drawText( "f = " + stringFreq + grandezaFreq, larguraEixoY + (larguraGrafico - larguraEixoX), alturaEixoY + (alturaGrafico*0.14f*0.25f), paintTextos);
+    }
+    private void atualizaDados() {
+        pathBarras.clear();
+        if (seriesBarras == null)
+            return;
+
+        quantidadeBarras = seriesBarras.tamanho();
+        tamanhoSerie = (larguraPaddingDireito - larguraPaddingEsquerdo) / quantidadeBarras;
+        distanciaSerie = 0.75f * tamanhoSerie;
+
+        for (int barra = 0; barra < quantidadeBarras; barra++) {
+            Path path = new Path();
+            path.addRect(larguraPaddingEsquerdo + barra * tamanhoSerie,
+                    (float) (alturaEixoY + alturaGrafico * (1.0 - ((seriesBarras.valor_y[barra] / seriesBarras.valorMaximo) * 0.95))),
+                    larguraPaddingEsquerdo + (barra+1) * tamanhoSerie - distanciaSerie,
+                    alturaGrafico + alturaEixoY, Path.Direction.CW);
+            listBarraDimensoes.add(new BarraDimensoes(larguraPaddingEsquerdo + barra * tamanhoSerie,
+                    (float) (alturaEixoY + alturaGrafico * (1.0 - ((seriesBarras.valor_y[barra] / seriesBarras.valorMaximo) * 0.95))),
+                    larguraPaddingEsquerdo + (barra + 1) * tamanhoSerie - distanciaSerie,
+                    alturaGrafico + alturaEixoY, barra));
+            pathBarras.add(path);
+        }
+        indexSelecionado = 0;
     }
 
     //region getters et setters
+    public void setGradeStatus(boolean gradeStatus) {
+        this.gradeStatus = gradeStatus;
+    }
     public void setGraficoFechado(boolean graficoFechado) {
         this.graficoFechado = graficoFechado;
-    }
-    public void setGradeHorizontal(boolean gradeHorizontal) {
-        this.gradeHorizontal = gradeHorizontal;
     }
     public void setNomeEixoX(String nomeEixoX) {
         this.nomeEixoX = nomeEixoX;
@@ -251,8 +283,24 @@ public class Grafico extends View {
     public void setNomeEixoY(String nomeEixoY) {
         this.nomeEixoY = nomeEixoY;
     }
-    public void setNumeroIntervalos(int numeroIntervalos) {
-        this.numeroIntervalos = numeroIntervalos;
+    public void setNumeroGradesHorizontais(int numeroGradesHorizontais) {
+        this.numeroGradesHorizontais = numeroGradesHorizontais;
     }
-    //endregion
+    public void setBarraColor(int color) {
+        paintBarras.setColor(color);
+    }
+    public void setBarraSelecionadaColor(int color) {
+        paintBarraSelecionada.setColor(color);
+        this.colorBarraSelecionada = color;
+    }
+    public void setGrandezaPhase(String grandezaPhase) {
+        this.grandezaPhase = grandezaPhase;
+    }
+    public void setGrandezaFreq(String grandezaFreq) {
+        this.grandezaFreq = grandezaFreq;
+    }
+    public void setGrandezaMagnitude(String grandezaMagnitude) {
+        this.grandezaMagnitude = grandezaMagnitude;
+    }
+//endregion
 }
