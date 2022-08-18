@@ -3,9 +3,13 @@
 
 [![](https://jitpack.io/v/salarolimatheus/GraphProject.svg)](https://jitpack.io/#salarolimatheus/GraphProject)
 
-Um gráfico de barras para Android focada para a visualização de componentes harmônicas de um sinal. Fique a vontade para alterar as coisas que forem necessárias para adequar ao seu projeto.
+Um gráfico de barras para Android focada para a visualização de componentes harmônicas de um sinal. 
+Fique a vontade para alterar as coisas que forem necessárias para adequar ao seu projeto.
+- Caso precise mudar as informações na legenda: modifique a função atualizaLegenda()
 
 ## 📱 Visualização
+
+![tela-app](https://user-images.githubusercontent.com/34732144/185512310-e4a8d777-209f-4a19-a94d-7282f7bf8584.gif)
 
 ## 🛠️ Como funciona
 ### XML
@@ -56,3 +60,26 @@ grafico.setOnTouchListener(new View.OnTouchListener() {
 ```
 
 #### Funções
+Gráfico de Barras:
+| Função                                                  	| Descrição da ação                                                                                                     	|
+|---------------------------------------------------------	|-----------------------------------------------------------------------------------------------------------------------	|
+| setGradeStatus(boolean gradeStatus)                     	| Adiciona as linhas de grade caso gradeStatus for verdadeiro. O padrão é verdadeiro                                    	|
+| setGraficoFechado(boolean graficoFechado)               	| Deixa o gráfico retangular (fecha as arestas superior e direito) caso graficoFechado for verdadeiro. O padrão é falso 	|
+| setNomeEixoX(String nomeEixoX)                          	| Insero o nome do eixo X para nomeEixoX                                                                                	|
+| setNomeEixoY(String nomeEixoY)                          	| Insere o nome do eixo Y para nomeEixoY                                                                                	|
+| setNumeroGradesHorizontais(int numeroGradesHorizontais) 	| Modifica o numero de divisões horizontais da grade                                                                    	|
+| setBarraColor (int color)                               	| Modifica a cor padrão das barras                                                                                      	|
+| setBarraSelecionadaColor(int color)                     	| Modifica a cor da barra selecionada                                                                                   	|
+| setGrandezaPhase(String grandezaPhase)                  	| Adiciona a grandeza do parametro fase da legenda                                                                      	|
+| setGrandezaFreq(String grandezaFreq)                    	| Adiciona a grandeza do parametro frequência da legenda                                                                	|
+| setGrandezaMagnitude(String grandezaMagnitude)          	| Adiciona a grandeza do parametro magnitude da legenda                                                                 	|
+| addSerie(SerieBarras series)                            	| Adiciona uma serie de barras                                                                                          	|
+
+Série de Barras:
+| Função                                                                  	| Descrição da ação                                                                                    	|
+|-------------------------------------------------------------------------	|------------------------------------------------------------------------------------------------------	|
+| addBarra ( int  valor_x,  double  valor_y,  double  arg1,  double arg2) 	| Adiciona uma barra com índice valor_x, valor final de valor_y e dois argumentos relacionados a barra 	|
+| addBarra ( int  valor_x,  double valor_y)                               	| Adiciona uma barra com indice valor_x e valor final de valor_y                                       	|
+| reiniciar()                                                             	| Retira todos os valores inseridos na série                                                           	|
+| tamanho()                                                               	| Retorna o tamanho da série                                                                           	|
+| getValorMaximo()                                                        	| Retorna o maior valor inserido na série                                                              	|
