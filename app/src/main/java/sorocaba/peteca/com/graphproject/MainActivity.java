@@ -2,8 +2,6 @@ package sorocaba.peteca.com.graphproject;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.view.MotionEvent;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import sorocaba.peteca.com.graphgenerator.Grafico;
@@ -31,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
         series.addBarra(2, 1.2014214,1, 120);
         series.reiniciar();
         series.addBarra(3, 30,1, 180);
-        series.addBarra(4, 1,1, 240);
+        series.addBarra(4, 0.001,1, 240);
         series.addBarra(5, 1,1, 240);
         series.addBarra(6, 50,1, 300);
         series.addBarra(8, 30,1, 180);
@@ -39,13 +37,9 @@ public class MainActivity extends AppCompatActivity {
 
         grafico.addSerie(series);
 
-        grafico.setOnTouchListener(new View.OnTouchListener() {
-            @SuppressLint("ClickableViewAccessibility")
-            @Override
-            public boolean onTouch(View view, MotionEvent motionEvent) {
-                grafico.ToqueNaTela(motionEvent);
-                return true;
-            }
+        grafico.setOnTouchListener((view, motionEvent) -> {
+            grafico.ToqueNaTela(motionEvent);
+            return true;
         });
     }
 }

@@ -126,8 +126,8 @@ public class Grafico extends View {
     public void ToqueNaTela(MotionEvent event) {
         for (int elemento = 0; elemento < listBarraDimensoes.size(); elemento++) {
             BarraDimensoes barraDimensoes = listBarraDimensoes.get(elemento);
-            if ((event.getX() >= barraDimensoes.left) && (event.getX() < barraDimensoes.right) &&
-                    (event.getY() > barraDimensoes.top) && (event.getY() < (barraDimensoes.bottom + alturaEixoX))) {
+            if ((event.getX() >= barraDimensoes.left * 0.85f) && (event.getX() < barraDimensoes.right * 1.15f) &&
+                    (event.getY() > barraDimensoes.top * 0.85f) && (event.getY() < (barraDimensoes.bottom + alturaEixoX) * 1.15f)) {
                 indexSelecionado = barraDimensoes.id;
             }
         }
@@ -265,8 +265,9 @@ public class Grafico extends View {
 
         for (int barra = 0; barra < quantidadeBarras; barra++) {
             Path path = new Path();
+            float a =(float) (alturaEixoY * 0.90f + alturaGrafico * (1.0 - ((seriesBarras.valor_y[barra] / seriesBarras.valorMaximo) * 0.95)));
             path.addRect(larguraPaddingEsquerdo + barra * tamanhoSerie,
-                    (float) (alturaEixoY + alturaGrafico * (1.0 - ((seriesBarras.valor_y[barra] / seriesBarras.valorMaximo) * 0.95))),
+                    a,
                     larguraPaddingEsquerdo + (barra+1) * tamanhoSerie - distanciaSerie,
                     alturaGrafico + alturaEixoY, Path.Direction.CW);
             listBarraDimensoes.add(new BarraDimensoes(larguraPaddingEsquerdo + barra * tamanhoSerie,
