@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
         grafico.setNomeEixoY("Magnitude [A]");
         grafico.setNumeroGradesHorizontais(4);
         grafico.setGrandezaMagnitude("A");
+        grafico.setLegenda("Ordem", "f", "Magnitude", "Fase");
 
         SerieBarras series = new SerieBarras();
         series.addBarra(1, 80.21513959303451, 1, 60);

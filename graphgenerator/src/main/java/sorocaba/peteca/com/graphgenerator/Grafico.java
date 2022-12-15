@@ -43,6 +43,7 @@ public class Grafico extends View {
     private int indexSelecionado = 0;
     private int colorBarraSelecionada = Color.RED;
     private float tamanhoSerie, distanciaSerie;
+    private String legenda1 = "Ordem", legenda2 = "f", legenda3 = "Magnitude", legenda4 = "Fase";
 
     private static class BarraDimensoes {
         public float left, top, right, bottom;
@@ -247,11 +248,11 @@ public class Grafico extends View {
         paintTextos.setTextAlign(Paint.Align.LEFT);
         canvas.drawRect(new RectF(larguraEixoY + (larguraGrafico*2.0f/5), alturaEixoY,
                 larguraEixoY + larguraGrafico, alturaEixoY + alturaGrafico*0.14f), paintEixos);
-        canvas.drawText("Ordem = " + stringOrdem, larguraEixoY + (larguraGrafico*2.1f/5), alturaEixoY + (alturaGrafico*0.14f*0.25f), paintTextos);
-        canvas.drawText("Magnitude = " + stringMagnitude + grandezaMagnitude, larguraEixoY + (larguraGrafico*2.1f/5),alturaEixoY + (alturaGrafico*0.14f*0.6f), paintTextos);
-        canvas.drawText("Phase = " + stringPhase + grandezaPhase, larguraEixoY + (larguraGrafico*2.1f/5), alturaEixoY + (alturaGrafico*0.14f*0.95f), paintTextos);
+        canvas.drawText(legenda1 + " = " + stringOrdem, larguraEixoY + (larguraGrafico*2.1f/5), alturaEixoY + (alturaGrafico*0.14f*0.25f), paintTextos);
+        canvas.drawText(legenda3 + " = " + stringMagnitude + grandezaMagnitude, larguraEixoY + (larguraGrafico*2.1f/5),alturaEixoY + (alturaGrafico*0.14f*0.6f), paintTextos);
+        canvas.drawText(legenda4 + " = " + stringPhase + grandezaPhase, larguraEixoY + (larguraGrafico*2.1f/5), alturaEixoY + (alturaGrafico*0.14f*0.95f), paintTextos);
         paintTextos.setTextAlign(Paint.Align.RIGHT);
-        canvas.drawText( "f = " + stringFreq + grandezaFreq, larguraEixoY + (larguraGrafico - larguraEixoX), alturaEixoY + (alturaGrafico*0.14f*0.25f), paintTextos);
+        canvas.drawText( legenda2 + " = " + stringFreq + grandezaFreq, larguraEixoY + (larguraGrafico - larguraEixoX), alturaEixoY + (alturaGrafico*0.14f*0.25f), paintTextos);
     }
     private void atualizaDados() {
         pathBarras.clear();
@@ -310,6 +311,12 @@ public class Grafico extends View {
     }
     public void setGrandezaMagnitude(String grandezaMagnitude) {
         this.grandezaMagnitude = grandezaMagnitude;
+    }
+    public void setLegenda(String legenda1, String legenda2, String legenda3, String legenda4) {
+        this.legenda1 = legenda1;
+        this.legenda2 = legenda2;
+        this.legenda3 = legenda3;
+        this.legenda4 = legenda4;
     }
 //endregion
 }
