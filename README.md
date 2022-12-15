@@ -32,6 +32,7 @@ grafico.setNomeEixoX("Ordem");
 grafico.setNomeEixoY("Magnitude [A]");
 grafico.setNumeroGradesHorizontais(4);
 grafico.setGrandezaMagnitude("A");
+grafico.setLegenda("Ordem", "f", "Magnitude", "Fase");
 ```
 
 Manipulando os dados para serem apresentados no gráfico:
