@@ -26,15 +26,14 @@ public class MainActivity extends AppCompatActivity {
         grafico.setLegenda("Ordem", "f", "Magnitude", "Fase");
 
         SerieBarras series = new SerieBarras();
-        series.addBarra(1, 80.21513959303451, 1, 60);
-        series.addBarra(2, 1.2014214,1, 120);
-        series.reiniciar();
-        series.addBarra(3, 30,1, 180);
-        series.addBarra(4, 0.001,1, 240);
-        series.addBarra(5, 1,1, 240);
-        series.addBarra(6, 50,1, 300);
-        series.addBarra(8, 30,1, 180);
-        series.addBarra(9, 1,1, 240);
+        series.addBarra(1, 15.564, 1, 60);
+        series.addBarra(2, 6.592,1, 120);
+        series.addBarra(3, 0.000,1, 180);
+        series.addBarra(4, 1.319,1, 240);
+        series.addBarra(5, 0.006,1, 240);
+        series.addBarra(6, 0.565,1, 300);
+        series.addBarra(7, 0.004,1, 180);
+        series.addBarra(8, 0.314,1, 180);
 
         grafico.addSerie(series);
 

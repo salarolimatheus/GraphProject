@@ -127,8 +127,9 @@ public class Grafico extends View {
     public void ToqueNaTela(MotionEvent event) {
         for (int elemento = 0; elemento < listBarraDimensoes.size(); elemento++) {
             BarraDimensoes barraDimensoes = listBarraDimensoes.get(elemento);
-            if ((event.getX() >= barraDimensoes.left * 0.85f) && (event.getX() < barraDimensoes.right * 1.15f) &&
-                    (event.getY() > barraDimensoes.top * 0.85f) && (event.getY() < (barraDimensoes.bottom + alturaEixoX) * 1.15f)) {
+            float largura = (barraDimensoes.right - barraDimensoes.left);
+            if ((event.getX() >= barraDimensoes.left - largura) && (event.getX() < barraDimensoes.right + largura) &&
+                    (event.getY() > barraDimensoes.top * 0.95f) && (event.getY() < (barraDimensoes.bottom + alturaEixoX))) {
                 indexSelecionado = barraDimensoes.id;
             }
         }
